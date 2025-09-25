@@ -1,0 +1,135 @@
+{
+  "pages": [
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "项目列表",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "首页",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/icon-generator/icon-generator",
+      "style": {
+        "navigationBarTitleText": "图标生成器",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/ebinder/subject-list",
+      "style": {
+        "navigationBarTitleText": "eBinder - 受试者列表",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/ebinder/subject-detail",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/ebinder/custom-camera",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/ebinder/image-editor",
+      "style": {
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false,
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/test/login-test",
+      "style": {
+        "navigationBarTitleText": "登录接口测试",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/blinding/blinding-list",
+      "style": {
+        "navigationBarTitleText": "编盲管理",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/blinding/blinding-detail",
+      "style": {
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": true,
+        "onReachBottomDistance": 50
+      }
+    },
+    {
+      "path": "pages/pharmacy/pharmacy-management",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#4a6feb",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#4a6feb",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "fontSize": "12px",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "首页",
+        "iconPath": "",
+        "selectedIconPath": ""
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "个人中心",
+        "iconPath": "",
+        "selectedIconPath": ""
+      }
+    ]
+  }
+}

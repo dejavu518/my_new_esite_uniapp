@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIMS-eSite 页面原型图总览</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
+        .prototype-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .prototype-item { background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        .prototype-header { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; }
+        .prototype-mockup { padding: 20px; height: 300px; background: #f8f9fa; }
+        .mockup-banner { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .mockup-form { max-width: 250px; margin: 0 auto; }
+        .mockup-input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 6px; }
+        .mockup-button { width: 100%; padding: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 6px; }
+        .mockup-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .mockup-card { background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .mockup-icon { width: 30px; height: 30px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 6px; margin: 0 auto 8px; }
+        .prototype-info { padding: 15px; background: #f8f9fa; }
+        .nav-section { background: white; padding: 20px; border-radius: 12px; text-align: center; margin-top: 30px; }
+        .nav-links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        .nav-link { background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; padding: 8px 16px; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 CIMS-eSite 页面原型图总览</h1>
+            <p>临床试验电子化站点管理系统 - UI界面设计预览</p>
+        </div>
+
+        <div class="prototype-grid">
+            <!-- 登录页面 -->
+            <div class="prototype-item">
+                <div class="prototype-header">
+                    <strong>登录页面</strong> <small>/pages/login/login</small>
+                </div>
+                <div class="prototype-mockup">
+                    <div class="mockup-banner">
+                        <h3>欢迎加入</h3>
+                        <h2>CIMS-eSite</h2>
+                    </div>
+                    <div class="mockup-form">
+                        <input class="mockup-input" placeholder="请输入客户代码" readonly>
+                        <input class="mockup-input" placeholder="请输入账号" readonly>
+                        <input class="mockup-input" type="password" placeholder="请输入密码" readonly>
+                        <button class="mockup-button">登录</button>
+                    </div>
+                </div>
+                <div class="prototype-info">
+                    <small>用户登录界面，支持客户代码、用户名密码登录</small>
+                </div>
+            </div>
+
+            <!-- 项目首页 -->
+            <div class="prototype-item">
+                <div class="prototype-header">
+                    <strong>项目首页</strong> <small>/pages/home/home</small>
+                </div>
+                <div class="prototype-mockup">
+                    <div class="mockup-banner">
+                        <strong>临床试验项目A</strong><br>
+                        <small>PRJ-2024-001 • XX制药公司 • 项目管理员</small>
+                    </div>
+                    <div class="mockup-grid">
+                        <div class="mockup-card"><div class="mockup-icon"></div>EDC</div>
+                        <div class="mockup-card"><div class="mockup-icon"></div>编盲管理</div>
+                        <div class="mockup-card"><div class="mockup-icon"></div>库房管理</div>
+                        <div class="mockup-card"><div class="mockup-icon"></div>药房管理</div>
+                    </div>
+                </div>
+                <div class="prototype-info">
+                    <small>项目主页，显示项目信息和功能模块入口</small>
+                </div>
+            </div>
+
+            <!-- 药房选择弹窗 -->
+            <div class="prototype-item">
+                <div class="prototype-header">
+                    <strong>药房选择弹窗</strong> <small>模态弹窗</small>
+                </div>
+                <div class="prototype-mockup">
+                    <div style="background: rgba(0,0,0,0.5); padding: 40px; display: flex; justify-content: center; align-items: center; height: 100%;">
+                        <div style="background: white; padding: 20px; border-radius: 12px; width: 200px;">
+                            <h4 style="margin-bottom: 15px;">选择药房</h4>
+                            <div style="border: 1px solid #ddd; padding: 8px; border-radius: 6px; margin-bottom: 15px;">请选择药房 ▼</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button style="flex: 1; padding: 6px; background: #f5f5f5; border: none; border-radius: 4px;">取消</button>
+                                <button style="flex: 1; padding: 6px; background: #667eea; color: white; border: none; border-radius: 4px;">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="prototype-info">
+                    <small>药房选择弹窗，支持下拉选择不同药房</small>
+                </div>
+            </div>
+
+            <!-- 药房管理页面 -->
+            <div class="prototype-item">
+                <div class="prototype-header">
+                    <strong>药房管理</strong> <small>/pages/pharmacy/pharmacy-management</small>
+                </div>
+                <div class="prototype-mockup">
+                    <div class="mockup-banner">
+                        <h3>01药房</h3>
+                        <small>药房管理</small>
+                    </div>
+                    <div style="background: white; border-radius: 8px; padding: 10px;">
+                        <div style="padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">药房接收入库 <span>→</span></div>
+                        <div style="padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">药房发药 <span>→</span></div>
+                        <div style="padding: 8px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">药房回收 <span>→</span></div>
+                        <div style="padding: 8px; display: flex; justify-content: space-between;">药物销毁 <span>→</span></div>
+                    </div>
+                </div>
+                <div class="prototype-info">
+                    <small>药房管理主页，显示选中药房和功能模块</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <h2>🔗 快速导航</h2>
+            <div class="nav-links">
+                <a href="http://localhost:9020" target="_blank" class="nav-link">🌐 本地开发预览</a>
+                <a href="http://localhost:9020/#/pages/login/login" target="_blank" class="nav-link">🔐 登录页面</a>
+                <a href="http://localhost:9020/#/pages/home/home" target="_blank" class="nav-link">🏠 项目首页</a>
+                <a href="./pages.json" target="_blank" class="nav-link">⚙️ 路由配置</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>点</li>
+                    <li>温湿度监控</li>
+                </ul>
+            </div>
+
+            <div class="prototype-card">
+                <h3>
+                    👤 个人中心
+                    <span class="status completed">已完成</span>
+                </h3>
+                <p>用户个人信息管理和系统设置</p>
+                <ul class="features">
+                    <li>个人信息展示</li>
+                    <li>密码修改</li>
+                    <li>系统设置</li>
+                    <li>消息通知</li>
+                    <li>退出登录</li>
+                </ul>
+            </div>
+
+            <div class="prototype-card">
+                <h3>
+                    🔧 工具页面
+                    <span class="status completed">已完成</span>
+                </h3>
+                <p>开发辅助工具和测试页面</p>
+                <ul class="features">
+                    <li>图标生成器</li>
+                    <li>登录接口测试</li>
+                    <li>API 调试工具</li>
+                    <li>样式预览</li>
+                    <li>组件测试</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <h2>🔗 快速导航</h2>
+            <div class="nav-links">
+                <a href="./index.html">本地开发预览</a>
+                <a href="http://localhost:9020" target="_blank">H5 开发服务器</a>
+                <a href="./pages.json" target="_blank">路由配置</a>
+                <a href="./manifest.json" target="_blank">应用配置</a>
+                <a href="./package.json" target="_blank">项目信息</a>
+                <a href="https://uniapp.dcloud.net.cn/" target="_blank">Uni-app 文档</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 CIMS-eSite - 临床试验电子化站点管理系统</p>
+            <p>基于 Uni-app + Vue 2 构建 | 支持 H5、小程序、App 多端运行</p>
+        </div>
+    </div>
+</body>
+</html>
