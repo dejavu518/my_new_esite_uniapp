@@ -81,6 +81,14 @@
       }
     },
     {
+      "path": "pages/test/camera-test",
+      "style": {
+        "navigationBarTitleText": "相机功能测试",
+        "navigationBarBackgroundColor": "transparent",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
       "path": "pages/blinding/blinding-list",
       "style": {
         "navigationBarTitleText": "编盲管理",

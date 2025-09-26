@@ -2,7 +2,7 @@
   <view class="custom-camera-page">
     <!-- 相机组件 -->
     <camera 
-      ref="camera"
+      id="camera"
       device-position="back" 
       flash="off" 
       class="camera-view"
@@ -104,6 +104,8 @@ export default {
   },
   
   onLoad(options) {
+    console.log('自定义相机页面加载:', options);
+    
     if (options.subjectId) {
       this.subjectId = options.subjectId;
     }
@@ -111,20 +113,37 @@ export default {
       this.subjectCode = options.subjectCode;
     }
     
+    console.log('参数初始化完成:', {
+      subjectId: this.subjectId,
+      subjectCode: this.subjectCode
+    });
+    
+    // 显示加载提示
+    uni.showToast({
+      title: '正在初始化相机...',
+      icon: 'loading',
+      duration: 2000
+    });
+    
     // 延迟启动扫描动画，等待相机初始化
     setTimeout(() => {
       if (!this.cameraReady) {
+        console.log('相机还没有准备好，先启动扫描动画');
         this.startScanAnimation();
       }
     }, 1000);
   },
   
   onReady() {
-    // 创建相机上下文
+    console.log('页面ready，开始初始化相机');
+    
+    // 创建相机上下文 - 使用组件ID而不是ref
     this.cameraContext = uni.createCameraContext('camera', this);
     
-    // 检查相机权限
-    this.checkCameraPermission();
+    // 延迟检查权限，确保页面完全加载
+    setTimeout(() => {
+      this.checkCameraPermission();
+    }, 500);
   },
   
   onUnload() {
@@ -135,48 +154,147 @@ export default {
   methods: {
     // 检查相机权限
     checkCameraPermission() {
+      console.log('开始检查相机权限');
+      
       // #ifdef APP-PLUS
-      const permissions = ['camera'];
-      plus.android.requestPermissions(permissions, (result) => {
-        if (result.granted && result.granted.length > 0) {
-          console.log('相机权限获取成功');
-        } else {
-          this.showPermissionError();
+      // APP端权限检查
+      uni.authorize({
+        scope: 'scope.camera',
+        success: () => {
+          console.log('APP相机权限获取成功');
+          this.initCamera();
+        },
+        fail: () => {
+          console.log('APP相机权限被拒绝');
+          this.showPermissionDialog();
         }
-      }, (error) => {
-        console.error('权限请求失败:', error);
-        this.showPermissionError();
       });
       // #endif
       
       // #ifdef H5
-      // H5环境下检查媒体设备权限
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(() => {
-            console.log('相机权限获取成功');
-          })
-          .catch((error) => {
-            console.error('相机权限获取失败:', error);
-            this.showPermissionError();
-          });
-      } else {
-        this.showPermissionError();
-      }
+      console.log('H5环境，检查浏览器相机支持');
+      // H5环境下直接尝试初始化，错误会在相机组件中捕获
+      this.initCamera();
+      // #endif
+      
+      // #ifdef MP-WEIXIN
+      // 微信小程序权限检查
+      uni.authorize({
+        scope: 'scope.camera',
+        success: () => {
+          console.log('小程序相机权限获取成功');
+          this.initCamera();
+        },
+        fail: () => {
+          console.log('小程序相机权限被拒绝');
+          this.showWeChatPermissionDialog();
+        }
+      });
+      // #endif
+      
+      // #ifdef MP-ALIPAY
+      // 支付宝小程序
+      my.authorize({
+        scopes: ['camera'],
+        success: () => {
+          console.log('支付宝小程序相机权限获取成功');
+          this.initCamera();
+        },
+        fail: () => {
+          console.log('支付宝小程序相机权限被拒绝');
+          this.showPermissionDialog();
+        }
+      });
       // #endif
     },
     
-    // 显示权限错误
-    showPermissionError() {
+    // 初始化相机
+    initCamera() {
+      console.log('初始化相机');
+      
+      // 如果相机还没有准备好，启动扫描动画作为占位
+      if (!this.cameraReady) {
+        this.startScanAnimation();
+        
+        // 设置超时检查
+        setTimeout(() => {
+          if (!this.cameraReady) {
+            console.log('相机初始化超时');
+            this.showCameraInitFailDialog();
+          }
+        }, 5000); // 5秒超时
+      }
+    },
+    
+    // 显示相机初始化失败对话框
+    showCameraInitFailDialog() {
       uni.showModal({
-        title: '相机权限',
-        content: '请允许应用访问相机权限，否则无法使用拍照功能',
-        showCancel: false,
+        title: '相机初始化失败',
+        content: '自定义相机无法正常启动，可能是设备兼容性问题。是否使用系统相机？',
+        confirmText: '使用系统相机',
+        cancelText: '重试',
+        success: (res) => {
+          if (res.confirm) {
+            this.fallbackToSystemCamera();
+          } else {
+            // 重试初始化
+            this.checkCameraPermission();
+          }
+        }
+      });
+    },
+    
+    // 显示权限对话框
+    showPermissionDialog() {
+      uni.showModal({
+        title: '需要相机权限',
+        content: '请允许应用访问相机权限，否则无法使用拍照功能。您可以选择去设置开启权限，或使用系统相机。',
         confirmText: '去设置',
+        cancelText: '系统相机',
+        success: (res) => {
+          if (res.confirm) {
+            // #ifdef APP-PLUS
+            plus.runtime.openURL('app-settings:');
+            // #endif
+            // #ifdef H5
+            uni.showToast({
+              title: '请在浏览器设置中允许相机权限',
+              icon: 'none',
+              duration: 3000
+            });
+            // #endif
+          } else {
+            // 使用系统相机作为降级方案
+            this.useSystemCamera();
+          }
+        }
+      });
+    },
+    
+    // 显示浏览器不支持对话框
+    showBrowserNotSupportDialog() {
+      uni.showModal({
+        title: '浏览器不支持',
+        content: '当前浏览器不支持摄像头功能，将使用系统相机',
+        showCancel: false,
+        confirmText: '继续',
         success: () => {
-          // #ifdef APP-PLUS
-          plus.runtime.openURL('app-settings:');
-          // #endif
+          this.useSystemCamera();
+        }
+      });
+    },
+    
+    // 微信小程序权限对话框
+    showWeChatPermissionDialog() {
+      uni.showModal({
+        title: '需要相机权限',
+        content: '请在小程序设置中开启相机权限',
+        confirmText: '去设置',
+        cancelText: '稍后',
+        success: (res) => {
+          if (res.confirm) {
+            uni.openSetting();
+          }
         }
       });
     },
@@ -186,6 +304,13 @@ export default {
       console.log('相机初始化完成');
       this.cameraReady = true;
       this.startScanAnimation();
+      
+      // 显示成功提示
+      uni.showToast({
+        title: '相机已就绪',
+        icon: 'success',
+        duration: 1500
+      });
     },
     
     // 扫码结果处理
@@ -206,11 +331,10 @@ export default {
     
     // 拍照
     takePhoto() {
+      // 首先检查相机是否可用
       if (!this.cameraContext) {
-        uni.showToast({
-          title: '相机未初始化',
-          icon: 'none'
-        });
+        console.log('相机上下文不存在，尝试使用系统相机');
+        this.fallbackToSystemCamera();
         return;
       }
       
@@ -219,6 +343,12 @@ export default {
           title: '相机正在初始化，请稍候...',
           icon: 'none'
         });
+        // 3秒后如果还没准备好，提供降级方案
+        setTimeout(() => {
+          if (!this.cameraReady) {
+            this.showCameraFallbackDialog();
+          }
+        }, 3000);
         return;
       }
       
@@ -245,19 +375,96 @@ export default {
           uni.hideLoading();
           console.error('拍照失败:', err);
           
-          let errorMsg = '拍照失败，请重试';
-          if (err.errMsg && err.errMsg.includes('permission')) {
-            errorMsg = '没有相机权限，请在设置中允许相机权限';
+          // 拍照失败时提供降级方案
+          this.handleCameraError(err);
+        }
+      });
+    },
+    
+    // 处理相机错误并提供降级方案
+    handleCameraError(err) {
+      console.error('相机操作失败:', err);
+      
+      let errorMsg = '拍照失败';
+      let useSystemCamera = false;
+      
+      if (err.errMsg) {
+        if (err.errMsg.includes('permission')) {
+          errorMsg = '没有相机权限';
+        } else if (err.errMsg.includes('busy')) {
+          errorMsg = '相机正在被其他应用使用';
+          useSystemCamera = true;
+        } else if (err.errMsg.includes('not available')) {
+          errorMsg = '相机不可用';
+          useSystemCamera = true;
+        } else {
+          useSystemCamera = true;
+        }
+      } else {
+        useSystemCamera = true;
+      }
+      
+      if (useSystemCamera) {
+        uni.showModal({
+          title: '相机错误',
+          content: errorMsg + '，是否使用系统相机？',
+          confirmText: '使用系统相机',
+          cancelText: '重试',
+          success: (res) => {
+            if (res.confirm) {
+              this.fallbackToSystemCamera();
+            } else {
+              // 重新开始扫描动画
+              this.startScanAnimation();
+            }
           }
-          
+        });
+      } else {
+        uni.showToast({
+          title: errorMsg,
+          icon: 'none',
+          duration: 3000
+        });
+        // 重新开始扫描动画
+        this.startScanAnimation();
+      }
+    },
+    
+    // 显示相机降级对话框
+    showCameraFallbackDialog() {
+      uni.showModal({
+        title: '相机初始化超时',
+        content: '自定义相机初始化失败，是否使用系统相机？',
+        confirmText: '使用系统相机',
+        cancelText: '继续等待',
+        success: (res) => {
+          if (res.confirm) {
+            this.fallbackToSystemCamera();
+          }
+        }
+      });
+    },
+    
+    // 降级到系统相机
+    fallbackToSystemCamera() {
+      uni.chooseImage({
+        count: 1,
+        sourceType: ['camera'],
+        success: (result) => {
+          if (result.tempFilePaths && result.tempFilePaths.length > 0) {
+            const imagePath = result.tempFilePaths[0];
+            uni.navigateTo({
+              url: `/pages/ebinder/image-editor?imagePath=${encodeURIComponent(imagePath)}&subjectId=${this.subjectId}&subjectCode=${this.subjectCode}`
+            });
+          }
+        },
+        fail: (err) => {
+          console.error('系统相机也失败了:', err);
           uni.showToast({
-            title: errorMsg,
+            title: '无法使用相机功能',
             icon: 'none',
             duration: 3000
           });
-          
-          // 重新开始扫描动画
-          this.startScanAnimation();
         }
       });
     },
@@ -313,32 +520,46 @@ export default {
     onCameraError(error) {
       console.error('相机错误:', error);
       
-      let errorMsg = '无法访问摄像头';
+      let errorMsg = '相机无法正常工作';
+      let showSystemOption = true;
+      
       if (error.detail && error.detail.errMsg) {
         const errMsg = error.detail.errMsg;
+        console.log('错误信息:', errMsg);
+        
         if (errMsg.includes('permission')) {
-          errorMsg = '没有相机权限，请在设置中允许相机权限';
+          errorMsg = '没有相机权限';
+          showSystemOption = false; // 权限问题，系统相机也不可用
         } else if (errMsg.includes('busy')) {
           errorMsg = '相机正在被其他应用使用';
+        } else if (errMsg.includes('not available') || errMsg.includes('not supported')) {
+          errorMsg = '设备不支持相机功能';
+        } else if (errMsg.includes('system error')) {
+          errorMsg = '系统错误，相机初始化失败';
         }
       }
       
-      uni.showModal({
-        title: '相机错误',
-        content: errorMsg + '，是否返回上一页？',
-        confirmText: '返回',
-        cancelText: '重试',
-        success: (res) => {
-          if (res.confirm) {
-            this.goBack();
-          } else {
-            // 重试初始化相机
-            this.$nextTick(() => {
-              this.checkCameraPermission();
-            });
+      // 停止扫描动画
+      this.stopScanAnimation();
+      
+      if (showSystemOption) {
+        uni.showModal({
+          title: '相机错误',
+          content: errorMsg + '。自定义相机不可用，是否使用系统相机？',
+          confirmText: '使用系统相机',
+          cancelText: '返回',
+          success: (res) => {
+            if (res.confirm) {
+              this.fallbackToSystemCamera();
+            } else {
+              this.goBack();
+            }
           }
-        }
-      });
+        });
+      } else {
+        // 权限问题，引导用户开启权限
+        this.showPermissionDialog();
+      }
     },
     
     // 使用系统相机（降级方案）

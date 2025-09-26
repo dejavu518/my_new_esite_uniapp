@@ -57,18 +57,25 @@
     "setting": {
       "urlCheck": false
     },
-    "usingComponents": true
+    "usingComponents": true,
+    "permission": {
+      "scope.camera": {
+        "desc": "用于拍摄文档和图片"
+      }
+    }
   },
   "h5": {
     /* H5特有相关 */
     "devServer": {
       "port": 9020,
-      "disableHostCheck": true
+      "disableHostCheck": true,
+      "https": false
     },
     "publicPath": "/",
     "router": {
       "mode": "hash"
-    }
+    },
+    "template": "index.html"
   },
   "vueVersion": "2"
 }
