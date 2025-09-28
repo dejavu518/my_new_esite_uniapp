@@ -904,113 +904,19 @@ export default {
 
     // 选择图片（拍照或相册）
     chooseImage() {
-      // 检查平台能力
-      const canUseCamera = this.checkCameraSupport();
-      
-      if (!canUseCamera) {
-        // 如果不支持相机，直接从相册选择
-        this.chooseFromAlbum();
-        return;
-      }
-      
       uni.showActionSheet({
-        itemList: ['使用扫描相机（推荐）', '使用系统相机', '从相册选择'],
+        itemList: ['使用相机拍照', '从相册选择'],
         success: (res) => {
           if (res.tapIndex === 0) {
-            // 使用自定义扫描相机（默认选项）
+            // 使用自定义相机拍照
             this.openCustomCamera();
           } else if (res.tapIndex === 1) {
-            // 使用系统相机
-            this.useSystemCamera();
-          } else if (res.tapIndex === 2) {
             // 从相册选择
             this.chooseFromAlbum();
           }
         },
         fail: (err) => {
           console.error('操作取消:', err);
-          // 如果用户取消操作选单，默认尝试自定义相机
-          this.openCustomCamera();
-        }
-      });
-    },
-    
-    // 检查相机支持
-    checkCameraSupport() {
-      // #ifdef H5
-      // H5环境检查
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        console.log('H5环境不支持相机API');
-        return false;
-      }
-      return true;
-      // #endif
-      
-      // #ifdef MP-WEIXIN
-      // 微信小程序环境检查
-      const systemInfo = uni.getSystemInfoSync();
-      if (systemInfo.platform === 'devtools') {
-        console.log('开发者工具中，可能不支持相机');
-        return true; // 开发工具中仍然尝试
-      }
-      return true;
-      // #endif
-      
-      // #ifdef APP-PLUS
-      // APP环境，通常支持相机
-      return true;
-      // #endif
-      
-      // 其他环境
-      return true;
-    },
-    
-    // 使用系统相机
-    useSystemCamera() {
-      uni.chooseImage({
-        count: 1,
-        sourceType: ['camera'],
-        success: (res) => {
-          if (res.tempFilePaths && res.tempFilePaths.length > 0) {
-            const imagePath = res.tempFilePaths[0];
-            // 跳转到图片编辑页面
-            uni.navigateTo({
-              url: `/pages/ebinder/image-editor?imagePath=${encodeURIComponent(
-                imagePath
-              )}&subjectId=${this.subjectId}&subjectCode=${this.subjectCode}`
-            });
-          }
-        },
-        fail: (err) => {
-          console.error('系统相机拍照失败:', err);
-          this.handleCameraError(err);
-        }
-      });
-    },
-    
-    // 处理相机错误
-    handleCameraError(err) {
-      let errorMsg = '相机功能不可用';
-      
-      if (err.errMsg) {
-        if (err.errMsg.includes('cancel')) {
-          return; // 用户取消，不显示错误
-        } else if (err.errMsg.includes('permission')) {
-          errorMsg = '没有相机权限，请在设置中开启';
-        } else if (err.errMsg.includes('not available')) {
-          errorMsg = '设备不支持相机功能';
-        }
-      }
-      
-      uni.showModal({
-        title: '无法使用相机',
-        content: errorMsg + '，是否从相册选择图片？',
-        confirmText: '选择相册',
-        cancelText: '取消',
-        success: (res) => {
-          if (res.confirm) {
-            this.chooseFromAlbum();
-          }
         }
       });
     },
